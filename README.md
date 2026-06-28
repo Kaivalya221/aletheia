@@ -1,361 +1,597 @@
 <div align="center">
 
+<br/>
+
+<img src="https://img.shields.io/badge/Aletheia-AI%20Reliability%20Platform-6366f1?style=for-the-badge&labelColor=0f0f0f" alt="Aletheia"/>
+
 <h1>Aletheia</h1>
 
-<h3>AI Reliability, Evaluation, Monitoring & Observability Platform</h3>
+<h3>Trace. Evaluate. Guard. Ship reliably.</h3>
 
 <p>
-  <strong>Trace. Evaluate. Guard. Ship reliably.</strong>
+An AI Reliability, Evaluation, Monitoring & Observability platform for engineering teams who want to catch LLM regressions <em>before</em> their users do.
+</p>
+
+<br/>
+
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-3.192.2-6366f1?style=flat-square">
+  <img alt="Node" src="https://img.shields.io/badge/node-24-339933?style=flat-square&logo=node.js&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square">
+  <img alt="Status" src="https://img.shields.io/badge/status-portfolio%20project-f59e0b?style=flat-square">
+  <img alt="pnpm" src="https://img.shields.io/badge/package_manager-pnpm-f97316?style=flat-square&logo=pnpm&logoColor=white">
 </p>
 
 <p>
-  <a href="#installation"><strong>Quickstart</strong></a> ·
-  <a href="#architecture"><strong>Architecture</strong></a> ·
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#key-improvements-over-base-platform"><strong>Engineering Highlights</strong></a> ·
-  <a href="#diagrams"><strong>Diagrams</strong></a>
+  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white">
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white">
+  <img alt="ClickHouse" src="https://img.shields.io/badge/ClickHouse-FFCC00?style=flat-square&logo=clickhouse&logoColor=black">
+  <img alt="Redis" src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white">
+  <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white">
 </p>
 
+<br/>
+
 <p>
-  <img alt="Status" src="https://img.shields.io/badge/status-portfolio%20project-blueviolet">
-  <img alt="License" src="https://img.shields.io/badge/license-MIT-E11311">
-  <img alt="Built with Next.js" src="https://img.shields.io/badge/frontend-Next.js%20%2B%20React%20%2B%20TypeScript-000000?logo=next.js&logoColor=white">
-  <img alt="Backend" src="https://img.shields.io/badge/backend-Node.js-339933?logo=node.js&logoColor=white">
-  <img alt="Database" src="https://img.shields.io/badge/database-PostgreSQL%20%2B%20Prisma-336791?logo=postgresql&logoColor=white">
-  <br/>
-  <img alt="Self-hosted" src="https://img.shields.io/badge/deployment-self--hosted-2E7D32">
-  <img alt="Single tenant" src="https://img.shields.io/badge/tenancy-single--tenant-informational">
-  <img alt="Origin" src="https://img.shields.io/badge/origin-open--source%20derivative-orange">
+  <a href="#-overview"><strong>Overview</strong></a> ·
+  <a href="#-features"><strong>Features</strong></a> ·
+  <a href="#-architecture"><strong>Architecture</strong></a> ·
+  <a href="#-monorepo-structure"><strong>Structure</strong></a> ·
+  <a href="#-getting-started"><strong>Quickstart</strong></a> ·
+  <a href="#-deployment"><strong>Deploy</strong></a> ·
+  <a href="#-engineering-highlights"><strong>Engineering</strong></a>
 </p>
+
+<br/>
+
+> **Provenance Note:** Aletheia is a customized, rebranded, and extended derivative of [Langfuse](https://github.com/langfuse/langfuse) (MIT). It is **not** the official Langfuse project and is not affiliated with its maintainers. New features (guardrails, regression diffing, reliability workflows) and the full platform transformation were independently designed and implemented. See [Acknowledgements](#-acknowledgements).
 
 </div>
 
-<br/>
-
-> **Provenance note:** Aletheia is a customized, rebranded, and extended derivative of [Langfuse](https://github.com/langfuse/langfuse), an open-source LLM engineering platform. It is **not** the official Langfuse project, and is **not** affiliated with or endorsed by its maintainers. See [Acknowledgements](#acknowledgements) for full details on what was inherited versus engineered for this project.
-
 ---
 
-## Table of Contents
+## 📖 Overview
 
-- [Overview](#overview)
-- [Features](#features)
-- [Architecture](#architecture)
-- [Key Improvements Over Base Platform](#key-improvements-over-base-platform)
-- [Engineering Contributions](#engineering-contributions)
-- [Diagrams](#diagrams)
-- [Installation](#installation)
-- [Deployment](#deployment)
-- [Technical Skills Demonstrated](#technical-skills-demonstrated)
-- [Acknowledgements](#acknowledgements)
+As LLM-powered applications move from prototypes to production, teams run into the same recurring problems:
 
----
+- Prompts **drift silently** between versions
+- Retrieval pipelines **fail without warning**
+- Model outputs **regress** after a "minor" model swap
+- There's **no structured way to catch** any of it before users do
 
-## Overview
+Aletheia closes that gap. It gives engineering teams a single platform to:
 
-As LLM-powered applications move from prototypes to production, teams run into a recurring set of problems: prompts drift silently, retrieval pipelines fail without warning, model outputs regress after a "minor" model swap, and there's no structured way to catch any of it before users do.
+| | |
+|---|---|
+| 👁️ **See** | What your LLM application is actually doing — call by call, session by session |
+| 📏 **Measure** | Output quality with automated and human-in-the-loop evaluation |
+| 🚨 **Catch regressions** | Before they ship, by diffing behavior across prompt, model, or code changes |
+| 🛡️ **Enforce reliability** | At runtime with guardrails that intercept unsafe or malformed outputs |
 
-Aletheia exists to close that gap. It gives engineering teams a single place to:
+The platform is built around one core idea: **LLM reliability is a continuous workflow**, not a one-time check.
 
-- **See** what their LLM application is actually doing, call by call, session by session.
-- **Measure** output quality with automated and human-in-the-loop evaluation.
-- **Catch regressions** before they ship, by diffing behavior across prompt, model, or code changes.
-- **Enforce reliability** at runtime with guardrails that can intercept unsafe or malformed outputs.
-
-The platform is designed around a simple idea: LLM reliability isn't a one-time check, it's a continuous workflow that spans development, testing, and production monitoring.
-
-```mermaid
-flowchart LR
-    A[Develop] --> B[Trace]
-    B --> C[Evaluate]
-    C --> D[Guard]
-    D --> E[Diff]
-    E --> F[Ship]
 ```
-
-<p align="center"><em>Each release moves through this loop before reaching production.</em></p>
-
----
-
-## Features
-
-```mermaid
-flowchart TD
-    Aletheia["Aletheia"]
-    Aletheia --> Observability["Observability"]
-    Aletheia --> Quality["Quality & evaluation"]
-    Aletheia --> Reliability["Reliability engineering"]
-
-    Observability --> O1[LLM tracing]
-    Observability --> O2[Session analytics]
-    Observability --> O3[User analytics]
-    Observability --> O4[Monitoring]
-
-    Quality --> Q1[Prompt management]
-    Quality --> Q2[Playground]
-    Quality --> Q3[Evaluators]
-    Quality --> Q4[Human annotation]
-    Quality --> Q5[Datasets]
-    Quality --> Q6[Experiments]
-
-    Reliability --> R1[Guardrails]
-    Reliability --> R2[Regression diffing]
-    Reliability --> R3[Reliability workflows]
-```
-
-<br/>
-
-| | Feature | Description |
-|---|---|---|
-| 🔍 | **LLM Tracing** | Full request/response capture for LLM calls, including nested spans for retrieval, embedding, tool calls, and agent steps. |
-| 💬 | **Session Analytics** | Aggregate multi-turn conversations into sessions to analyze user journeys, drop-off points, and conversational quality over time. |
-| 👤 | **User Analytics** | Per-user usage, cost, and quality breakdowns to identify high-friction or high-value usage patterns. |
-| 📊 | **Monitoring** | Dashboards for latency, token usage, error rates, and cost, with drill-down into individual traces. |
-| 📝 | **Prompt Management** | Centralized, version-controlled prompt storage with rollback and environment-based deployment. |
-| 🧪 | **Playground** | Interactive environment to iterate on prompts and model parameters directly against traced examples. |
-| ✅ | **Evaluators** | Pluggable evaluation pipeline supporting LLM-as-a-judge scoring, deterministic code-based checks, and custom scoring functions. |
-| 🖋️ | **Human Annotation** | Manual labeling workflows for building ground-truth datasets and auditing model behavior. |
-| 📂 | **Datasets** | Curated test sets for regression testing and benchmarking, decoupled from live production data. |
-| 🔬 | **Experiments** | Structured experiment runs that compare outputs across prompt/model variants against a fixed dataset. |
-| 🛡️ | **Guardrails** | A request-time sidecar layer that validates, filters, or blocks LLM inputs/outputs based on configurable policies — a core engineering addition in Aletheia (see below). |
-| 🔁 | **Regression Diffing** | Side-by-side comparison of evaluation results across two versions of a prompt, model, or pipeline, surfacing behavioral drift before deployment. |
-| ⚙️ | **Reliability Workflows** | Opinionated workflows that tie tracing, evaluation, and guardrails together into a single pre-deployment reliability check. |
-
----
-
-## Architecture
-
-<p align="center">
-  <img alt="Next.js" src="https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white">
-  <img alt="React" src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB">
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white">
-  <img alt="Node.js" src="https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white">
-  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white">
-  <img alt="Prisma" src="https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white">
-</p>
-
-**Frontend**
-- Next.js
-- React
-- TypeScript
-
-**Backend**
-- Node.js
-- REST/internal APIs for trace ingestion, evaluation orchestration, and dataset management
-
-**Database**
-- PostgreSQL
-- Prisma ORM
-
-### High-Level Flow
-
-```mermaid
-flowchart TD
-    A[Frontend - Next.js] --> B[Backend API - Node.js]
-    B --> C[PostgreSQL]
-    B --> D[Tracing + evaluation pipeline]
-```
-
-### Detailed Request Flow
-
-```mermaid
-flowchart TD
-    App["Instrumented LLM app<br/>(Aletheia SDK)"] --> API["Aletheia ingestion API<br/>(Node.js backend)"]
-    API --> Guard["Guardrail sidecar<br/>(request/response interception)"]
-    Guard --> DB["PostgreSQL<br/>(via Prisma)"]
-    DB --> Web["Next.js web app<br/>(traces, evals, datasets, diffing)"]
+Develop → Trace → Evaluate → Guard → Diff → Ship
 ```
 
 ---
 
-## Key Improvements Over Base Platform
+## ✨ Features
 
-Aletheia started from an open-source LLM observability codebase. The sections below distinguish what was inherited from the original foundation versus what was added, modified, or removed as part of this project.
+### 🔍 Observability
 
-### Rebranding
-Full rebrand of naming, theming, and product identity — UI strings, color system, logos, and metadata were reworked so the platform stands on its own rather than reading as a fork.
+<table>
+<tr>
+<td width="50%">
 
-### UI/UX Improvements
-Simplified navigation for the reliability-focused workflows this project emphasizes, removed UI surface area tied to multi-tenant SaaS concerns, and reworked several views (trace detail, dataset comparison) for clarity.
+**LLM Tracing**
 
-### Removal of SaaS Billing Functionality
-Stripped out subscription, billing, plan-gating, and usage-metering code paths that only made sense in a hosted multi-tenant SaaS context. This significantly reduced the codebase's operational surface area and made it suitable for a self-contained, single-tenant deployment.
+Full request/response capture for every LLM call — including nested spans for retrieval, embedding, tool calls, and agent steps. Visualize entire execution trees with latency, token usage, and cost breakdowns per node.
 
-### Reliability-Focused Workflows
-Re-oriented the product around a "ship reliably" workflow rather than a general analytics dashboard — tying tracing, evaluation, and regression diffing into a single before-you-deploy checklist instead of three disconnected features.
+</td>
+<td width="50%">
 
-### Guardrails (New)
-Added a **guardrail sidecar proxy**: a lightweight interception layer that sits between the application and the LLM provider, capable of applying policy checks (e.g., schema validation, blocklist/allowlist filtering, basic safety heuristics) to requests and responses without modifying application code. This was not part of the original platform.
+**Session Analytics**
 
-### Regression Testing / Diffing (New)
-Built a **regression diffing engine** that compares evaluation scores and outputs across two versions of a prompt, model configuration, or pipeline run against the same dataset, surfacing deltas rather than requiring manual comparison.
+Aggregate multi-turn conversations into sessions. Analyze user journeys, drop-off points, and conversational quality trends over time — not just individual calls.
 
-### Cleanup of External Dependencies
-Audited and removed dependencies tied to multi-tenant billing, telemetry reporting to third-party services, and SaaS-specific cloud integrations, reducing the dependency footprint for self-hosted, portfolio-scale deployment.
+</td>
+</tr>
+<tr>
+<td width="50%">
 
-### Error Handling Improvements
-Hardened ingestion and evaluation API paths with more defensive error handling, clearer failure states surfaced in the UI, and better handling of partial/malformed trace payloads.
+**User Analytics**
 
-### Platform Transformation
-- Removed all upstream branding across UI, navigation, metadata, dialogs, documentation references, and settings pages.
-- Removed external documentation redirects, support links, upgrade prompts, SaaS onboarding flows, and enterprise-oriented navigation.
-- Eliminated billing and subscription-related UI components that caused runtime errors in self-hosted deployments.
-- Simplified the platform into a portfolio-focused AI reliability engineering system.
-- Refactored settings and navigation structures to better align with single-user, self-hosted deployments.
-- Audited inherited dependencies and removed unnecessary SaaS-specific functionality.
+Per-user breakdowns of usage, cost, latency, and quality scores. Identify high-friction users, cost drivers, and power users at a glance.
 
-> **Engineering note:** the original platform provided the core data model, tracing pipeline, and UI scaffolding. The contributions above — guardrails, regression diffing, the reliability-workflow restructuring, the platform transformation, and the dependency/billing cleanup — are the parts of this project I designed and implemented.
+</td>
+<td width="50%">
 
----
+**Monitoring Dashboards**
 
-## Engineering Contributions
+Real-time charts for latency percentiles, token consumption, error rates, and cost. Drill down from aggregate trends into individual traces in one click.
 
-Key contributions made during the Aletheia transformation, summarized in resume-ready form:
-
-- Re-architected a multi-tenant SaaS observability platform into a single-tenant, self-hosted reliability tool by removing billing, plan-gating, and usage-metering subsystems.
-- Stripped all upstream branding, navigation, documentation links, and SaaS onboarding flows across the UI, replacing them with a streamlined, single-purpose product experience.
-- Designed and implemented a **guardrail sidecar proxy** that intercepts LLM requests/responses at runtime and applies configurable validation, filtering, and safety policies without requiring changes to application code.
-- Built a **regression diffing engine** that compares evaluation outputs and scores across two prompt, model, or pipeline versions against a shared dataset, surfacing behavioral drift before deployment.
-- Restructured the product's information architecture around a "develop → trace → evaluate → guard → diff → ship" reliability workflow, replacing a general-purpose analytics dashboard layout.
-- Audited and removed third-party telemetry, billing, and SaaS-specific cloud dependencies, reducing the dependency surface for self-hosted deployment.
-- Hardened ingestion and evaluation API error handling to gracefully manage partial or malformed trace payloads.
-- Executed a full rebrand across UI strings, theming, and metadata to establish an independent product identity distinct from the upstream codebase.
+</td>
+</tr>
+</table>
 
 ---
 
-## Diagrams
+### 🧪 Quality & Evaluation
 
-> _No product screenshots are included — the platform's UI isn't deployed publicly. The diagrams below (rendered natively by GitHub via mermaid) illustrate the system's architecture and workflow instead. Once a live deployment exists, this section can be replaced with real screenshots of the trace detail view, evaluation dashboard, regression diff view, and guardrail configuration panel._
+<table>
+<tr>
+<td width="33%">
 
-**System architecture**
+**Prompt Management**
 
-```mermaid
-flowchart TD
-    App["Instrumented LLM app<br/>(Aletheia SDK)"] --> API["Aletheia ingestion API<br/>(Node.js backend)"]
-    API --> Guard["Guardrail sidecar<br/>(request/response interception)"]
-    Guard --> DB["PostgreSQL<br/>(via Prisma)"]
-    DB --> Web["Next.js web app<br/>(traces, evals, datasets, diffing)"]
+Centralized, version-controlled prompt storage with rollback and environment-based deployment. Fully decoupled from application code — update prompts without a redeploy.
+
+</td>
+<td width="33%">
+
+**Playground**
+
+Interactive sandbox to iterate on prompts and model parameters directly against traced production examples. Compare outputs live before committing to a change.
+
+</td>
+<td width="33%">
+
+**Evaluators**
+
+Pluggable evaluation pipeline supporting LLM-as-a-judge scoring, deterministic code-based checks, and custom scoring functions. Runs automatically against every incoming trace.
+
+</td>
+</tr>
+<tr>
+<td width="33%">
+
+**Human Annotation**
+
+Manual labeling workflows for building ground-truth datasets and auditing model behavior. Queue-based annotation with team support.
+
+</td>
+<td width="33%">
+
+**Datasets**
+
+Curated test sets built from production traces, completely decoupled from live data. Used as the benchmark for all experiment and regression runs.
+
+</td>
+<td width="33%">
+
+**Experiments**
+
+Structured experiment runs that compare LLM outputs across prompt/model variants against a fixed dataset — with visual score comparisons and latency breakdowns.
+
+</td>
+</tr>
+</table>
+
+---
+
+### 🛡️ Reliability Engineering *(New in Aletheia)*
+
+<table>
+<tr>
+<td width="33%">
+
+**Guardrails** 🆕
+
+A request-time sidecar proxy that intercepts LLM inputs and outputs and applies configurable policies — schema validation, PII detection, blocklist/allowlist filtering, and moderation checks — **without modifying application code**.
+
+</td>
+<td width="33%">
+
+**Regression Diffing** 🆕
+
+Side-by-side comparison of evaluation results across two versions of a prompt, model configuration, or pipeline. Surfaces behavioral drift — score deltas, changed outputs — before any deployment.
+
+</td>
+<td width="33%">
+
+**Reliability Workflows** 🆕
+
+Opinionated pre-deployment checklists that tie tracing, evaluation, and guardrail results into a single pass/fail signal. Powered by BullMQ worker queues running checks asynchronously.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🏗️ Architecture
+
+### Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js 14, React, TypeScript, Tailwind CSS |
+| **Backend API** | Node.js, tRPC, REST |
+| **Primary DB** | PostgreSQL + Prisma ORM |
+| **Analytics DB** | ClickHouse (columnar, high-cardinality event storage) |
+| **Queue / Jobs** | Redis + BullMQ |
+| **Object Storage** | S3-compatible (MinIO for local / any S3 provider in prod) |
+| **Guardrail Proxy** | Express.js sidecar (TypeScript, Zod validation) |
+| **Package Manager** | pnpm + Turborepo monorepo |
+| **Containerization** | Docker + Docker Compose |
+
+---
+
+### System Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   Instrumented LLM App                  │
+│              (using @aletheia/aletheia SDK)              │
+└─────────────────────┬───────────────────────────────────┘
+                      │ trace events / API calls
+                      ▼
+┌─────────────────────────────────────────────────────────┐
+│              Aletheia Ingestion API (Node.js)            │
+│                  tRPC + REST endpoints                   │
+└────┬──────────────────────────────────────┬─────────────┘
+     │                                      │
+     ▼                                      ▼
+┌──────────────┐                   ┌────────────────────┐
+│  Guardrail   │                   │   BullMQ Worker    │
+│  Sidecar     │                   │   (background      │
+│  Proxy       │                   │    eval jobs)      │
+└──────┬───────┘                   └─────────┬──────────┘
+       │                                     │
+       ▼                                     ▼
+┌─────────────────┐              ┌───────────────────────┐
+│  PostgreSQL     │              │  ClickHouse            │
+│  (Prisma ORM)   │              │  (wide event store)    │
+│  users, prompts │              │  traces, observations  │
+│  datasets, etc. │              │  scores, sessions      │
+└────────┬────────┘              └──────────┬────────────┘
+         │                                  │
+         └──────────────┬───────────────────┘
+                        ▼
+          ┌─────────────────────────────┐
+          │   Next.js Web App           │
+          │   Traces · Evals · Diffs    │
+          │   Guardrails · Datasets     │
+          └─────────────────────────────┘
 ```
 
-**Reliability workflow**
+---
 
-```mermaid
-flowchart LR
-    A[Develop] --> B[Trace] --> C[Evaluate] --> D[Guard] --> E[Diff] --> F[Ship]
+### Reliability Workflow
+
+```
+┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+│ Develop  │───▶│  Trace   │───▶│ Evaluate │───▶│  Guard   │───▶│   Diff   │───▶│   Ship   │
+└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
+  Write LLM      Capture all     Auto-score       Guardrail       Compare vs       Merge with
+  application    calls + spans   with evals       sidecar runs    prev version     confidence
 ```
 
 ---
 
-## Installation
+### Architecture Principles
+
+Aletheia is architected around **wide, richly-attributed events** rather than fragmented metrics + logs + traces:
+
+- **Observations are the primary unit** — traces are correlation handles, not the only entry point
+- **High-cardinality context preserved** — filter and debug unknown unknowns without predefining every query
+- **Columnar-first** for analytics (ClickHouse): narrow field selection, time-bounded scans, useful ordering keys
+- **Immutable / append-oriented** event records for high-volume telemetry
+- **Compact query representations** for lists and dashboards; raw payloads fetched only on detail views
+- **Real-time debugging preserved** — batch processing augments, never blocks, fresh production visibility
+
+---
+
+## 📦 Monorepo Structure
+
+```
+aletheia/
+├── web/                     # Next.js app — UI, tRPC, public REST API
+├── worker/                  # BullMQ queue consumers & background jobs
+├── packages/
+│   ├── shared/              # Domain models, DB schema, queue contracts, repositories
+│   ├── guardrail/           # @aletheia/guardrail — Express sidecar proxy
+│   ├── aletheia/            # @aletheia/aletheia — JS/TS SDK for instrumentation
+│   ├── aletheia-core/       # Core SDK primitives
+│   ├── aletheia-langchain/  # LangChain integration
+│   └── config-*/            # Shared ESLint / TypeScript configs
+├── ee/                      # Enterprise feature package (consumed by web)
+├── fern/                    # API definition sources (OpenAPI / Fern)
+├── generated/               # Generated API clients (do not hand-edit)
+├── scripts/                 # Repo tooling scripts
+├── specs/                   # API and integration specs
+├── .agents/                 # Agent configuration (AGENTS.md, skills, MCP config)
+├── docker-compose.yml       # Production compose
+└── docker-compose.dev.yml   # Local dev compose
+```
+
+**Dependency direction:**
+```
+web ──────────────────────┐
+worker ───────────────────┤──▶ @aletheia/shared ──▶ (no internal imports)
+@aletheia/ee ─────────────┘
+```
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18+)
-- PostgreSQL (v14+)
-- npm or pnpm
 
-### Local Setup
+| Tool | Version |
+|---|---|
+| Node.js | `24` |
+| pnpm | latest |
+| Docker + Docker Compose | any recent version |
+| PostgreSQL | `14+` (or via Docker) |
+
+---
+
+### Local Development (Docker)
+
+The fastest path. Docker Compose brings up Postgres, ClickHouse, Redis, and MinIO automatically.
 
 ```bash
-# Clone the repository
+# 1. Clone the repo
 git clone https://github.com/<your-username>/aletheia.git
 cd aletheia
 
-# Install dependencies
-npm install
+# 2. Install dependencies
+pnpm install
 
-# Configure environment variables
+# 3. Copy environment config
 cp .env.example .env
-# Edit .env with your PostgreSQL connection string and other config
+# Open .env and fill in secrets (see comments marked # CHANGEME)
 
-# Run database migrations
-npx prisma migrate dev
-
-# Start the development server
-npm run dev
+# 4. Full dev reset + seed (spins up infra, runs migrations, seeds example data, starts dev server)
+pnpm run dx
 ```
 
-The app should now be running at `http://localhost:3000`.
+The app will be available at **http://localhost:3000**.
 
-### Docker (Optional)
+> **What `pnpm run dx` does:** installs deps → prunes + starts Docker infra → resets test and dev databases → runs ClickHouse reset → seeds example data → starts the Turborepo dev server across all packages.
+
+---
+
+### Individual Dev Commands
 
 ```bash
-docker compose up --build
+# Start infra only (Postgres, ClickHouse, Redis, MinIO)
+pnpm run infra:dev:up
+
+# Run dev server (web + worker)
+pnpm run dev
+
+# Run web only
+pnpm run dev:web
+
+# Run worker only
+pnpm run dev:worker
+
+# Database migrations
+pnpm run db:migrate
+
+# Seed example data
+pnpm run db:seed:examples
+
+# Typecheck all packages
+pnpm run typecheck
+
+# Lint all packages
+pnpm run lint
+
+# Run all tests
+pnpm run test
 ```
 
 ---
 
-## Deployment
+### Environment Variables
 
-### Self-Hosted (Single Server)
+Key variables to configure in `.env`:
 
-1. Provision a server with Node.js and PostgreSQL installed (or use a managed Postgres instance).
-2. Set required environment variables (database URL, API keys, secret keys for auth).
-3. Run `npx prisma migrate deploy` to apply migrations against the production database.
-4. Build the production bundle: `npm run build`
-5. Start the server: `npm run start`
+```env
+# Database
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
 
-### Containerized Deployment
+# Auth
+NEXTAUTH_URL=http://localhost:3000
+SALT=<random string>
+ENCRYPTION_KEY=<openssl rand -hex 32>
 
-A `Dockerfile` and Docker Compose configuration are included for containerized deployment to any environment supporting Docker (e.g., a VM, ECS, or a Kubernetes cluster via a Helm chart if you choose to extend one).
+# ClickHouse
+CLICKHOUSE_URL=http://localhost:8123
+CLICKHOUSE_USER=clickhouse
+CLICKHOUSE_PASSWORD=<your password>
+
+# S3 / MinIO (local default)
+ALETHEIA_S3_EVENT_UPLOAD_BUCKET=aletheia
+ALETHEIA_S3_EVENT_UPLOAD_ENDPOINT=http://localhost:9000
+ALETHEIA_S3_EVENT_UPLOAD_ACCESS_KEY_ID=minio
+ALETHEIA_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY=miniosecret
+```
+
+---
+
+## 🐳 Deployment
+
+### Self-Hosted (Docker Compose)
 
 ```bash
-# Standard deployment
+# Standard production deployment
 docker compose up -d
 
-# If you maintain a separate production compose file, reference it explicitly:
-# docker compose -f docker-compose.<your-prod-file>.yml up -d
+# With build step
+docker compose -f docker-compose.build.yml up -d --build
 ```
 
-> Check the repository root for the exact compose file names available (e.g. `docker-compose.yml`, `docker-compose.dev.yml`) and adjust the command above accordingly — file names vary by environment and may be renamed as the project evolves.
-
-> This project is intended for self-hosted, single-tenant use. No cloud-hosted "Aletheia Cloud" offering, billing system, or managed service exists — those concerns were intentionally removed (see [Key Improvements](#key-improvements-over-base-platform)).
+Services started:
+- `aletheia-web` — Next.js web app (port `3000`)
+- `aletheia-worker` — BullMQ background worker (port `3030`)
+- `postgres` — PostgreSQL
+- `clickhouse` — ClickHouse analytics DB
+- `redis` — Queue broker
+- `minio` — S3-compatible object storage (admin UI port `9090`)
 
 ---
 
-## Technical Skills Demonstrated
+### Self-Hosted (Manual)
 
-| | Skill | Applied On This Project |
-|---|---|---|
-| 🧱 | **Full Stack Development** | Next.js/React/TypeScript frontend integrated with a Node.js backend and PostgreSQL persistence layer. |
-| 🤖 | **AI Infrastructure** | Designed and implemented a guardrail sidecar for runtime LLM request/response interception. |
-| 📡 | **Observability Systems** | Worked with distributed tracing concepts (spans, nested observations, session aggregation) applied to LLM call graphs. |
-| 🗄️ | **Database Design** | Modified and extended a Prisma/PostgreSQL schema to support new evaluation and regression-diffing data models. |
-| 🔌 | **API Development** | Built and hardened ingestion and evaluation APIs, including error handling for malformed/partial payloads. |
-| 🏗️ | **System Design** | Re-architected parts of the platform to remove multi-tenant SaaS coupling and re-orient it around a single-tenant reliability workflow. |
-| 🐛 | **Debugging** | Diagnosed and resolved issues introduced by large-scale removal of billing/telemetry code paths without breaking core tracing functionality. |
-| 🎯 | **Product Engineering** | Made deliberate scope, UX, and architecture decisions to reposition a general observability tool as a focused reliability platform. |
+```bash
+# 1. Install deps
+pnpm install
+
+# 2. Build all packages
+pnpm run build
+
+# 3. Apply DB migrations
+pnpm --filter=shared run db:migrate
+
+# 4. Start production server
+pnpm run start
+```
 
 ---
 
-## Acknowledgements
+### Variants
 
-Aletheia is built upon [Langfuse](https://github.com/langfuse/langfuse), an open-source LLM engineering platform, and has been customized and extended for educational, portfolio, and research purposes. The original codebase provided the foundational tracing pipeline, data model, and UI scaffolding; the architecture, feature additions (guardrails, regression diffing), rebranding, platform transformation, and reliability-workflow restructuring described in this README are my own work.
+| Compose File | Use Case |
+|---|---|
+| `docker-compose.yml` | Standard production |
+| `docker-compose.dev.yml` | Local development with hot-reload |
+| `docker-compose.build.yml` | Production with local build step |
+| `docker-compose.dev-azure.yml` | Azure Blob Storage variant |
+| `docker-compose.dev-redis-cluster.yml` | Redis Cluster variant |
 
-This project is not affiliated with, endorsed by, or representative of Langfuse or its maintainers. No original Langfuse branding, trademarks, or marketing content are used here.
+> **Single-tenant only.** Aletheia is designed for self-hosted, single-tenant deployment. All multi-tenant SaaS billing, plan-gating, and usage-metering code has been removed.
 
 ---
 
-## License
+## 🛠️ Engineering Highlights
 
-This project is derived from [Langfuse](https://github.com/langfuse/langfuse), an open-source LLM engineering platform.
+### What Was Built (New in Aletheia)
+
+**Guardrail Sidecar Proxy** (`packages/guardrail/`)
+
+A TypeScript Express.js proxy that intercepts LLM requests and responses at runtime and applies configurable policies — schema validation via Zod, PII detection, blocklist/allowlist filtering, moderation checks — without requiring changes to application code. Acts as a transparent middleware layer between the application and any LLM provider.
+
+**Regression Diffing Engine**
+
+Side-by-side comparison of evaluation outputs and scores across two prompt/model/pipeline versions against the same dataset. Surfaces behavioral drift — score deltas, semantic output changes — as a diff view rather than requiring manual comparison across runs.
+
+**Reliability Workflows**
+
+Opinionated pre-deployment checklists powered by BullMQ worker queues. Ties tracing, evaluation scoring, and guardrail results into a single automated pass/fail signal before a prompt or model change merges.
+
+**Platform Transformation**
+
+- Removed all billing, subscription, plan-gating, and usage-metering subsystems
+- Stripped multi-tenant SaaS onboarding flows, upgrade prompts, and external telemetry reporting
+- Rebuilt navigation and information architecture around the develop → trace → evaluate → guard → diff → ship reliability workflow
+- Full rebrand: UI strings, color system, logos, metadata
+- Hardened ingestion and evaluation API error handling for malformed/partial trace payloads
+- Audited and removed third-party SaaS cloud integrations to reduce self-hosted dependency footprint
+
+---
+
+### Technical Skills Demonstrated
+
+| Skill | Applied |
+|---|---|
+| **Full Stack** | Next.js/React/TypeScript frontend + Node.js backend + dual-database persistence |
+| **AI Infrastructure** | Guardrail sidecar for runtime LLM request/response interception and policy enforcement |
+| **Observability Systems** | Distributed tracing (spans, nested observations, session aggregation) applied to LLM call graphs |
+| **Columnar DB Design** | ClickHouse schema design for wide-event observability at scale (high-cardinality, time-bounded, append-oriented) |
+| **Relational DB Design** | Extended Prisma/PostgreSQL schema for evaluation and regression-diffing data models |
+| **API Development** | tRPC + REST ingestion and evaluation APIs with defensive error handling for malformed payloads |
+| **Queue Architecture** | BullMQ + Redis async job orchestration for parallel evaluation and reliability workflow execution |
+| **System Design** | Re-architected multi-tenant SaaS platform into a focused, single-tenant reliability tool |
+| **Monorepo Engineering** | pnpm + Turborepo workspace with strict dependency direction, shared configs, and agent tooling |
+| **Product Engineering** | Deliberate scope, UX, and architecture decisions to reposition a general analytics tool as a reliability platform |
+
+---
+
+## 🔌 SDK Usage
+
+Instrument your LLM application with the `@aletheia/aletheia` SDK:
+
+```typescript
+import Aletheia from "@aletheia/aletheia";
+
+const aletheia = new Aletheia({
+  publicKey: "pk-...",
+  secretKey: "sk-...",
+  baseUrl: "http://localhost:3000",
+});
+
+// Trace a generation
+const trace = aletheia.trace({ name: "my-llm-call", userId: "user-123" });
+
+const generation = trace.generation({
+  name: "openai-completion",
+  model: "gpt-4o",
+  input: messages,
+});
+
+// ... call your LLM provider ...
+
+generation.end({ output: response, usage: { promptTokens: 100, completionTokens: 50 } });
+trace.update({ output: response.content });
+```
+
+**LangChain integration** is available via `@aletheia/aletheia-langchain`:
+
+```typescript
+import { AletheiaCallbackHandler } from "@aletheia/aletheia-langchain";
+
+const handler = new AletheiaCallbackHandler();
+const chain = new LLMChain({ llm, prompt, callbacks: [handler] });
+```
+
+---
+
+## 🤝 Acknowledgements
+
+Aletheia is built on top of [Langfuse](https://github.com/langfuse/langfuse) (MIT), an open-source LLM engineering platform. The original codebase provided the foundational tracing pipeline, data model, and UI scaffolding.
+
+The following are my own work:
+- Guardrail sidecar proxy (new feature)
+- Regression diffing engine (new feature)
+- Reliability workflow restructuring (new feature)
+- Full platform transformation (billing removal, branding, SaaS cleanup)
+- Architecture hardening (error handling, dependency audit, observability principles)
+
+This project is not affiliated with, endorsed by, or representative of Langfuse or its maintainers.
+
+---
+
+## 📄 License
+
+Derived from [Langfuse](https://github.com/langfuse/langfuse), licensed under the MIT License.
 
 ```
-Original copyright:
-Copyright (c) 2022–2026 Langfuse GmbH
-
-Licensed under the MIT License.
-
-Additional modifications and extensions for Aletheia:
-Copyright (c) 2026 Jayanth
+Original copyright: Copyright (c) 2022–2026 Langfuse GmbH
+Modifications for Aletheia: Copyright (c) 2026 Jayanth
 ```
 
-See [`LICENSE`](LICENSE) for the full MIT License text, including the original copyright notice as required by its terms.
+See [LICENSE](LICENSE) for the full MIT License text.
+
+---
+
+<div align="center">
 
 <br/>
 
-<div align="center">
-  <sub>Built by Jayanth · Portfolio Project · Not affiliated with the original upstream project</sub>
-  <br/><br/>
-  <img alt="Made with care" src="https://img.shields.io/badge/made%20with-care-ff69b4">
-  <img alt="Reliability first" src="https://img.shields.io/badge/philosophy-reliability%20first-2E7D32">
+**Aletheia** — AI Reliability Engineering, from trace to ship.
+
+<img alt="Made with care" src="https://img.shields.io/badge/made%20with-care-ff69b4?style=flat-square">
+<img alt="Reliability first" src="https://img.shields.io/badge/philosophy-reliability%20first-6366f1?style=flat-square">
+<img alt="Self hosted" src="https://img.shields.io/badge/deployment-self--hosted-22c55e?style=flat-square">
+
+<br/><br/>
+
+<sub>Portfolio project by Jayanth · Not affiliated with Langfuse</sub>
+
 </div>
