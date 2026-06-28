@@ -9,7 +9,7 @@
 <h3>Trace. Evaluate. Guard. Ship reliably.</h3>
 
 <p>
-An AI Reliability, Evaluation, Monitoring & Observability platform for engineering teams who want to catch LLM regressions <em>before</em> their users do.
+An AI Reliability, Evaluation, Monitoring &amp; Observability platform for engineering teams who want to catch LLM regressions <em>before</em> their users do.
 </p>
 
 <br/>
@@ -71,10 +71,6 @@ Aletheia closes that gap. It gives engineering teams a single platform to:
 
 The platform is built around one core idea: **LLM reliability is a continuous workflow**, not a one-time check.
 
-```
-Develop → Trace → Evaluate → Guard → Diff → Ship
-```
-
 ---
 
 ## ✨ Features
@@ -126,21 +122,21 @@ Real-time charts for latency percentiles, token consumption, error rates, and co
 
 **Prompt Management**
 
-Centralized, version-controlled prompt storage with rollback and environment-based deployment. Fully decoupled from application code — update prompts without a redeploy.
+Centralized, version-controlled prompt storage with rollback and environment-based deployment. Fully decoupled from application code.
 
 </td>
 <td width="33%">
 
 **Playground**
 
-Interactive sandbox to iterate on prompts and model parameters directly against traced production examples. Compare outputs live before committing to a change.
+Interactive sandbox to iterate on prompts and model parameters directly against traced production examples. Compare outputs live.
 
 </td>
 <td width="33%">
 
 **Evaluators**
 
-Pluggable evaluation pipeline supporting LLM-as-a-judge scoring, deterministic code-based checks, and custom scoring functions. Runs automatically against every incoming trace.
+Pluggable evaluation pipeline supporting LLM-as-a-judge scoring, deterministic code-based checks, and custom scoring functions.
 
 </td>
 </tr>
@@ -149,21 +145,21 @@ Pluggable evaluation pipeline supporting LLM-as-a-judge scoring, deterministic c
 
 **Human Annotation**
 
-Manual labeling workflows for building ground-truth datasets and auditing model behavior. Queue-based annotation with team support.
+Manual labeling workflows for building ground-truth datasets and auditing model behavior.
 
 </td>
 <td width="33%">
 
 **Datasets**
 
-Curated test sets built from production traces, completely decoupled from live data. Used as the benchmark for all experiment and regression runs.
+Curated test sets built from production traces, decoupled from live data. Used as the benchmark for all experiment runs.
 
 </td>
 <td width="33%">
 
 **Experiments**
 
-Structured experiment runs that compare LLM outputs across prompt/model variants against a fixed dataset — with visual score comparisons and latency breakdowns.
+Structured runs comparing outputs across prompt/model variants against a fixed dataset, with visual score and latency breakdowns.
 
 </td>
 </tr>
@@ -179,21 +175,21 @@ Structured experiment runs that compare LLM outputs across prompt/model variants
 
 **Guardrails** 🆕
 
-A request-time sidecar proxy that intercepts LLM inputs and outputs and applies configurable policies — schema validation, PII detection, blocklist/allowlist filtering, and moderation checks — **without modifying application code**.
+A request-time sidecar proxy intercepting LLM inputs and outputs and applying configurable policies — schema validation, PII detection, blocklist filtering, moderation checks — without modifying application code.
 
 </td>
 <td width="33%">
 
 **Regression Diffing** 🆕
 
-Side-by-side comparison of evaluation results across two versions of a prompt, model configuration, or pipeline. Surfaces behavioral drift — score deltas, changed outputs — before any deployment.
+Side-by-side comparison of evaluation results across two versions of a prompt, model, or pipeline. Surfaces behavioral drift before any deployment.
 
 </td>
 <td width="33%">
 
 **Reliability Workflows** 🆕
 
-Opinionated pre-deployment checklists that tie tracing, evaluation, and guardrail results into a single pass/fail signal. Powered by BullMQ worker queues running checks asynchronously.
+Pre-deployment checklists that tie tracing, evaluation, and guardrail results into a single pass/fail signal. Powered by BullMQ worker queues.
 
 </td>
 </tr>
@@ -202,6 +198,30 @@ Opinionated pre-deployment checklists that tie tracing, evaluation, and guardrai
 ---
 
 ## 🏗️ Architecture
+
+### System Architecture
+
+How your LLM app, the ingestion API, guardrail proxy, databases, and web dashboard connect:
+
+![Aletheia system architecture](assets/architecture.svg)
+
+---
+
+### Reliability Workflow
+
+Every release moves through this loop before reaching production:
+
+![Aletheia reliability loop](assets/reliability-loop.svg)
+
+---
+
+### Guardrail Pipeline
+
+How the guardrail sidecar intercepts and validates requests — zero changes to your application code:
+
+![Aletheia guardrail pipeline](assets/guardrail.svg)
+
+---
 
 ### Tech Stack
 
@@ -219,58 +239,6 @@ Opinionated pre-deployment checklists that tie tracing, evaluation, and guardrai
 
 ---
 
-### System Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                   Instrumented LLM App                  │
-│              (using @aletheia/aletheia SDK)              │
-└─────────────────────┬───────────────────────────────────┘
-                      │ trace events / API calls
-                      ▼
-┌─────────────────────────────────────────────────────────┐
-│              Aletheia Ingestion API (Node.js)            │
-│                  tRPC + REST endpoints                   │
-└────┬──────────────────────────────────────┬─────────────┘
-     │                                      │
-     ▼                                      ▼
-┌──────────────┐                   ┌────────────────────┐
-│  Guardrail   │                   │   BullMQ Worker    │
-│  Sidecar     │                   │   (background      │
-│  Proxy       │                   │    eval jobs)      │
-└──────┬───────┘                   └─────────┬──────────┘
-       │                                     │
-       ▼                                     ▼
-┌─────────────────┐              ┌───────────────────────┐
-│  PostgreSQL     │              │  ClickHouse            │
-│  (Prisma ORM)   │              │  (wide event store)    │
-│  users, prompts │              │  traces, observations  │
-│  datasets, etc. │              │  scores, sessions      │
-└────────┬────────┘              └──────────┬────────────┘
-         │                                  │
-         └──────────────┬───────────────────┘
-                        ▼
-          ┌─────────────────────────────┐
-          │   Next.js Web App           │
-          │   Traces · Evals · Diffs    │
-          │   Guardrails · Datasets     │
-          └─────────────────────────────┘
-```
-
----
-
-### Reliability Workflow
-
-```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│ Develop  │───▶│  Trace   │───▶│ Evaluate │───▶│  Guard   │───▶│   Diff   │───▶│   Ship   │
-└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
-  Write LLM      Capture all     Auto-score       Guardrail       Compare vs       Merge with
-  application    calls + spans   with evals       sidecar runs    prev version     confidence
-```
-
----
-
 ### Architecture Principles
 
 Aletheia is architected around **wide, richly-attributed events** rather than fragmented metrics + logs + traces:
@@ -280,7 +248,6 @@ Aletheia is architected around **wide, richly-attributed events** rather than fr
 - **Columnar-first** for analytics (ClickHouse): narrow field selection, time-bounded scans, useful ordering keys
 - **Immutable / append-oriented** event records for high-volume telemetry
 - **Compact query representations** for lists and dashboards; raw payloads fetched only on detail views
-- **Real-time debugging preserved** — batch processing augments, never blocks, fresh production visibility
 
 ---
 
@@ -301,8 +268,7 @@ aletheia/
 ├── fern/                    # API definition sources (OpenAPI / Fern)
 ├── generated/               # Generated API clients (do not hand-edit)
 ├── scripts/                 # Repo tooling scripts
-├── specs/                   # API and integration specs
-├── .agents/                 # Agent configuration (AGENTS.md, skills, MCP config)
+├── .agents/                 # Agent config (AGENTS.md, skills, MCP config)
 ├── docker-compose.yml       # Production compose
 └── docker-compose.dev.yml   # Local dev compose
 ```
@@ -325,13 +291,10 @@ worker ───────────────────┤──▶ @al
 | Node.js | `24` |
 | pnpm | latest |
 | Docker + Docker Compose | any recent version |
-| PostgreSQL | `14+` (or via Docker) |
 
 ---
 
-### Local Development (Docker)
-
-The fastest path. Docker Compose brings up Postgres, ClickHouse, Redis, and MinIO automatically.
+### Local Development (Docker — recommended)
 
 ```bash
 # 1. Clone the repo
@@ -343,70 +306,46 @@ pnpm install
 
 # 3. Copy environment config
 cp .env.example .env
-# Open .env and fill in secrets (see comments marked # CHANGEME)
+# Fill in secrets (see comments marked # CHANGEME)
 
-# 4. Full dev reset + seed (spins up infra, runs migrations, seeds example data, starts dev server)
+# 4. Full dev reset + seed
 pnpm run dx
 ```
 
 The app will be available at **http://localhost:3000**.
 
-> **What `pnpm run dx` does:** installs deps → prunes + starts Docker infra → resets test and dev databases → runs ClickHouse reset → seeds example data → starts the Turborepo dev server across all packages.
+> `pnpm run dx` installs deps → prunes + starts Docker infra → resets databases → seeds example data → starts the dev server across all packages.
 
 ---
 
-### Individual Dev Commands
+### Individual Commands
 
 ```bash
-# Start infra only (Postgres, ClickHouse, Redis, MinIO)
-pnpm run infra:dev:up
-
-# Run dev server (web + worker)
-pnpm run dev
-
-# Run web only
-pnpm run dev:web
-
-# Run worker only
-pnpm run dev:worker
-
-# Database migrations
-pnpm run db:migrate
-
-# Seed example data
-pnpm run db:seed:examples
-
-# Typecheck all packages
-pnpm run typecheck
-
-# Lint all packages
-pnpm run lint
-
-# Run all tests
-pnpm run test
+pnpm run infra:dev:up      # start Postgres, ClickHouse, Redis, MinIO
+pnpm run dev               # dev server (web + worker)
+pnpm run dev:web           # web only
+pnpm run dev:worker        # worker only
+pnpm run db:migrate        # run database migrations
+pnpm run db:seed:examples  # seed example data
+pnpm run typecheck         # typecheck all packages
+pnpm run test              # run all tests
+pnpm run lint              # lint all packages
 ```
 
 ---
 
-### Environment Variables
-
-Key variables to configure in `.env`:
+### Key Environment Variables
 
 ```env
-# Database
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
-
-# Auth
 NEXTAUTH_URL=http://localhost:3000
 SALT=<random string>
 ENCRYPTION_KEY=<openssl rand -hex 32>
 
-# ClickHouse
 CLICKHOUSE_URL=http://localhost:8123
 CLICKHOUSE_USER=clickhouse
 CLICKHOUSE_PASSWORD=<your password>
 
-# S3 / MinIO (local default)
 ALETHEIA_S3_EVENT_UPLOAD_BUCKET=aletheia
 ALETHEIA_S3_EVENT_UPLOAD_ENDPOINT=http://localhost:9000
 ALETHEIA_S3_EVENT_UPLOAD_ACCESS_KEY_ID=minio
@@ -417,55 +356,37 @@ ALETHEIA_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY=miniosecret
 
 ## 🐳 Deployment
 
-### Self-Hosted (Docker Compose)
+### Docker Compose (recommended)
 
 ```bash
-# Standard production deployment
 docker compose up -d
-
-# With build step
-docker compose -f docker-compose.build.yml up -d --build
 ```
 
-Services started:
+Services:
 - `aletheia-web` — Next.js web app (port `3000`)
 - `aletheia-worker` — BullMQ background worker (port `3030`)
-- `postgres` — PostgreSQL
-- `clickhouse` — ClickHouse analytics DB
-- `redis` — Queue broker
-- `minio` — S3-compatible object storage (admin UI port `9090`)
+- `postgres`, `clickhouse`, `redis`, `minio`
 
----
+### Compose Variants
 
-### Self-Hosted (Manual)
-
-```bash
-# 1. Install deps
-pnpm install
-
-# 2. Build all packages
-pnpm run build
-
-# 3. Apply DB migrations
-pnpm --filter=shared run db:migrate
-
-# 4. Start production server
-pnpm run start
-```
-
----
-
-### Variants
-
-| Compose File | Use Case |
+| File | Use Case |
 |---|---|
 | `docker-compose.yml` | Standard production |
-| `docker-compose.dev.yml` | Local development with hot-reload |
-| `docker-compose.build.yml` | Production with local build step |
+| `docker-compose.dev.yml` | Local development |
+| `docker-compose.build.yml` | Production with local build |
 | `docker-compose.dev-azure.yml` | Azure Blob Storage variant |
 | `docker-compose.dev-redis-cluster.yml` | Redis Cluster variant |
 
-> **Single-tenant only.** Aletheia is designed for self-hosted, single-tenant deployment. All multi-tenant SaaS billing, plan-gating, and usage-metering code has been removed.
+### Manual Deploy
+
+```bash
+pnpm install
+pnpm run build
+pnpm --filter=shared run db:migrate
+pnpm run start
+```
+
+> **Single-tenant only.** All multi-tenant SaaS billing, plan-gating, and usage-metering code has been removed.
 
 ---
 
@@ -475,24 +396,23 @@ pnpm run start
 
 **Guardrail Sidecar Proxy** (`packages/guardrail/`)
 
-A TypeScript Express.js proxy that intercepts LLM requests and responses at runtime and applies configurable policies — schema validation via Zod, PII detection, blocklist/allowlist filtering, moderation checks — without requiring changes to application code. Acts as a transparent middleware layer between the application and any LLM provider.
+A TypeScript Express.js proxy that intercepts LLM requests and responses at runtime and applies configurable policies — Zod schema validation, PII detection, blocklist/allowlist filtering, moderation checks — without requiring changes to application code.
 
 **Regression Diffing Engine**
 
-Side-by-side comparison of evaluation outputs and scores across two prompt/model/pipeline versions against the same dataset. Surfaces behavioral drift — score deltas, semantic output changes — as a diff view rather than requiring manual comparison across runs.
+Side-by-side comparison of evaluation outputs and scores across two prompt/model/pipeline versions against the same dataset. Surfaces behavioral drift — score deltas, semantic output changes — as a structured diff view.
 
 **Reliability Workflows**
 
-Opinionated pre-deployment checklists powered by BullMQ worker queues. Ties tracing, evaluation scoring, and guardrail results into a single automated pass/fail signal before a prompt or model change merges.
+Pre-deployment checklists powered by BullMQ worker queues. Ties tracing, evaluation scoring, and guardrail results into a single automated pass/fail signal before a prompt or model change merges.
 
 **Platform Transformation**
 
 - Removed all billing, subscription, plan-gating, and usage-metering subsystems
-- Stripped multi-tenant SaaS onboarding flows, upgrade prompts, and external telemetry reporting
-- Rebuilt navigation and information architecture around the develop → trace → evaluate → guard → diff → ship reliability workflow
+- Stripped multi-tenant SaaS onboarding flows, upgrade prompts, and external telemetry
+- Rebuilt navigation around the develop → trace → evaluate → guard → diff → ship workflow
 - Full rebrand: UI strings, color system, logos, metadata
 - Hardened ingestion and evaluation API error handling for malformed/partial trace payloads
-- Audited and removed third-party SaaS cloud integrations to reduce self-hosted dependency footprint
 
 ---
 
@@ -501,21 +421,18 @@ Opinionated pre-deployment checklists powered by BullMQ worker queues. Ties trac
 | Skill | Applied |
 |---|---|
 | **Full Stack** | Next.js/React/TypeScript frontend + Node.js backend + dual-database persistence |
-| **AI Infrastructure** | Guardrail sidecar for runtime LLM request/response interception and policy enforcement |
+| **AI Infrastructure** | Guardrail sidecar for runtime LLM request/response interception |
 | **Observability Systems** | Distributed tracing (spans, nested observations, session aggregation) applied to LLM call graphs |
-| **Columnar DB Design** | ClickHouse schema design for wide-event observability at scale (high-cardinality, time-bounded, append-oriented) |
+| **Columnar DB Design** | ClickHouse schema for wide-event observability (high-cardinality, time-bounded, append-oriented) |
 | **Relational DB Design** | Extended Prisma/PostgreSQL schema for evaluation and regression-diffing data models |
-| **API Development** | tRPC + REST ingestion and evaluation APIs with defensive error handling for malformed payloads |
-| **Queue Architecture** | BullMQ + Redis async job orchestration for parallel evaluation and reliability workflow execution |
-| **System Design** | Re-architected multi-tenant SaaS platform into a focused, single-tenant reliability tool |
-| **Monorepo Engineering** | pnpm + Turborepo workspace with strict dependency direction, shared configs, and agent tooling |
-| **Product Engineering** | Deliberate scope, UX, and architecture decisions to reposition a general analytics tool as a reliability platform |
+| **API Development** | tRPC + REST ingestion and evaluation APIs with defensive error handling |
+| **Queue Architecture** | BullMQ + Redis async job orchestration for parallel evaluation runs |
+| **System Design** | Re-architected multi-tenant SaaS platform into a focused single-tenant reliability tool |
+| **Monorepo Engineering** | pnpm + Turborepo workspace with strict dependency direction and shared configs |
 
 ---
 
 ## 🔌 SDK Usage
-
-Instrument your LLM application with the `@aletheia/aletheia` SDK:
 
 ```typescript
 import Aletheia from "@aletheia/aletheia";
@@ -526,7 +443,6 @@ const aletheia = new Aletheia({
   baseUrl: "http://localhost:3000",
 });
 
-// Trace a generation
 const trace = aletheia.trace({ name: "my-llm-call", userId: "user-123" });
 
 const generation = trace.generation({
@@ -538,10 +454,9 @@ const generation = trace.generation({
 // ... call your LLM provider ...
 
 generation.end({ output: response, usage: { promptTokens: 100, completionTokens: 50 } });
-trace.update({ output: response.content });
 ```
 
-**LangChain integration** is available via `@aletheia/aletheia-langchain`:
+**LangChain integration:**
 
 ```typescript
 import { AletheiaCallbackHandler } from "@aletheia/aletheia-langchain";
@@ -556,14 +471,9 @@ const chain = new LLMChain({ llm, prompt, callbacks: [handler] });
 
 Aletheia is built on top of [Langfuse](https://github.com/langfuse/langfuse) (MIT), an open-source LLM engineering platform. The original codebase provided the foundational tracing pipeline, data model, and UI scaffolding.
 
-The following are my own work:
-- Guardrail sidecar proxy (new feature)
-- Regression diffing engine (new feature)
-- Reliability workflow restructuring (new feature)
-- Full platform transformation (billing removal, branding, SaaS cleanup)
-- Architecture hardening (error handling, dependency audit, observability principles)
+The following are my own work: guardrail sidecar proxy, regression diffing engine, reliability workflow restructuring, full platform transformation (billing removal, rebrand, SaaS cleanup), and architecture hardening.
 
-This project is not affiliated with, endorsed by, or representative of Langfuse or its maintainers.
+Not affiliated with, endorsed by, or representative of Langfuse or its maintainers.
 
 ---
 
